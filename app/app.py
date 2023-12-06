@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from starlette.staticfiles import StaticFiles
 
 from app.routing.login import router as login_router
 from app.routing.register import router as register_router
@@ -14,3 +15,6 @@ app = create_app()
 app.include_router(login_router)
 app.include_router(register_router)
 app.include_router(accounts_router)
+app.mount("/static", StaticFiles(directory="app/qr_codes"), name="static")
+
+

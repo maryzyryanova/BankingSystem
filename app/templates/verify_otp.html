@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+</head>
+<body>
+    <h1>User Authentication</h1>
+    <form id="authForm" action="/verify_otp" method="POST">
+        <label for="otp">One-time password from Google Authenticator App:</label>
+        <input type="text" id="otp" name="otp" required>
+
+        <button id="btn" type="submit">Verify</button>
+    </form>
+
+    <script>
+        document.getElementById("authForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            fetch("/verify_otp", {
+                method: "POST",
+                body: new FormData(document.getElementById("authForm")),
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    window.location.href = "/accounts";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching image URL:", response.statusText);
+            });
+        });
+    </script>
+</body>
+</html>

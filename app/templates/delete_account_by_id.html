@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Удаление</title>
+</head>
+<body>
+  <div id="main-template">
+    </div>
+
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <h2>Delete?</h2>
+      <p>Do you want to delete an account?</p>
+      <button type="button" class="btn btn-danger">Delete</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var deleteModal = document.getElementById("delete-modal");
+      var mainTemplate = document.getElementById("main-template");
+
+      deleteModal.addEventListener("hidden.bs.modal", function() {
+        mainTemplate.style.display = "block";
+      });
+
+      var deleteButton = document.querySelector(".btn-delete");
+      deleteButton.addEventListener("click", function() {
+        deleteModal.style.display = "block";
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -27,8 +27,7 @@ class AccountsService:
             percent_rate = self.percent_rate_service.create_percent_rate(percent_rate_schema)
             percent_rate_id = percent_rate.id
         else:
-            percent_rate = ''
-            percent_rate_id= ''
+            percent_rate_id = ''
 
         account = Accounts(
             id=uuid4(),
@@ -52,3 +51,14 @@ class AccountsService:
 
     def get_accounts_list(self, user_id):
         return self.session.query(Accounts).filter(Accounts.user_id == user_id)
+
+    def get_account_by_id(self, account_id):
+        return self.session.query(Accounts).filter(Accounts.id == account_id).first()
+
+    def delete_account_by_id(self, account_id):
+        account = self.get_account_by_id(account_id)
+        self.session.delete(account)
+
+    def deposit_account(self, account_id, amount):
+        account: Accounts = self.get_account_by_id(account_id)
+        account_type = self.session.query(AccountsType).filter(AccountsType.id == account.type_id).first().account_type

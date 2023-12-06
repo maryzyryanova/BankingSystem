@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+</head>
+<body>
+    <h1>User Registration</h1>
+    <form method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required>
+
+        <label for="surname">Surname:</label>
+        <input type="text" id="surname" name="surname" required>
+
+        <button id="btn" type="submit">Register</button>
+    </form>
+
+    <img id="qr" style="display: none;">
+
+    <script>
+        window.addEventListener("load",()=>{
+        document.getElementById("btn").addEventListener("click", (e)=>{
+            e.preventDefault();
+            const apiUrl = "http://localhost:8000/register";
+            const formData = new FormData();
+
+            formData.append('email', document.getElementById('email').value);
+            formData.append('password', document.getElementById('password').value);
+            formData.append('first_name', document.getElementById('first_name').value);
+            formData.append('surname', document.getElementById('surname').value);
+
+            const apiRequest = fetch(apiUrl, {
+                method: 'POST',
+                body: formData
+            });
+
+            apiRequest.then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        const imageUrl = data.qr_url;
+                        document.getElementById("qr").src = imageUrl;
+                        document.getElementById("qr").style.display = "block";
+
+                        const nextButton = document.createElement('button');
+                            nextButton.textContent = 'Go to Next Page';
+                            nextButton.addEventListener('click', () => {
+                                window.location.href = '/verify_otp';
+                            });
+
+                            document.body.appendChild(nextButton);
+
+                    });
+                } else {
+                    console.error("Error fetching image URL:", response.statusText);
+                }
+            });
+        });});
+    </script>
+</body>
+</html>

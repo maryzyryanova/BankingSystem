@@ -13,3 +13,10 @@ class PercentRateSchema(BaseModel):
     date_from: datetime.datetime
     date_till: datetime.datetime
     summa: int
+
+
+class CreateAccountsSchema(AccountsSchema):
+    percent: int
+    date_from: datetime.datetime
+    date_till: datetime.datetime
+    summa: int

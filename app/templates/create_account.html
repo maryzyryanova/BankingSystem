@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+</head>
+<body>
+<h1>Create Account</h1>
+
+<form action="/accounts/create" method="POST">
+    <div class="form-group">
+        <label for="account_type">Account Type:</label>
+        <select name="account_type" class="form-control" id="account-type">
+            <option value="CreditAccount">Credit Account</option>
+            <option value="DepositAccount">Deposit Account</option>
+            <option value="DefaultAccount">Default Account</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="currency">Currency:</label>
+        <select name="currency" class="form-control">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="RUB">RUB</option>
+            <option value="BYN">BYN</option>
+        </select>
+    </div>
+    <div id="credit-form">
+        <div class="form-group">
+            <label for="percent_rate">Interest Rate:</label>
+            <input type="number" name="percent_rate" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" name="amount" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" class="form-control" required>
+        </div>
+    </div>
+    <input type="submit" value="Create Account">
+</form>
+</body>
+<script>
+    window.addEventListener('load', ()=>{
+        document.getElementById("account-type").addEventListener("input", (e)=>{
+            let el = e.target;
+            let a = el.value;
+            let b = document.getElementById("credit-form");
+            var value = el.options[el.selectedIndex].value;
+            var text = el.options[el.selectedIndex].text;
+
+            if (a == 'CreditAccount' || a == 'DepositAccount'){
+                b.style.display = "block";
+            }else{
+                b.style.display = "none";
+            }
+        });
+    });
+</script>
+</html>
