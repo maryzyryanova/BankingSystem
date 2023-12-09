@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>User log in</h1>
-    <form action="/login" method="POST">
+    <form id = "loginForm" action="/login" method="POST">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
 
@@ -16,5 +16,24 @@
 
         <button id="btn" type="submit">Log In</button>
     </form>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            fetch("/login", {
+                method: "POST",
+                body: new FormData(document.getElementById("loginForm")),
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    window.location.href = "/accounts";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching image URL:", response.statusText);
+            });
+        });
+    </script>
 </body>
 </html>

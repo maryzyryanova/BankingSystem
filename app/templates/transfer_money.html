@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Money</title>
+</head>
+<body>
+    <h1>Transfer Money</h1>
+
+    <form action="/accounts/{{ account_id }}/transfer" method="POST">
+        <label for="account_from">Account From:</label>
+        <input type="text" id="account_from" name="account_from" value="{{ account_number }}" readonly>
+
+        <label for="account_to">Account To:</label>
+        <input type="text" id="account_to" name="account_to">
+
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount" name="amount">
+
+        <button type="submit">Transfer</button>
+    </form>
+</body>
+</html>

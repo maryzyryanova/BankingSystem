@@ -2,9 +2,109 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Information</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #000;
+        }
+
+        button {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    {{ account.account_number }}
+    <h1>Account Information</h1>
+    <table>
+        <tr>
+            <th>Account Number</th>
+            <td>{{ account.account_number }}</td>
+        </tr>
+        {% for type in accounts_type %}
+            {% if type.id == account.type_id %}
+            <tr>
+                <th>Account Type</th>
+                <td>{{ type.account_type }}</td>
+            </tr>
+
+                {% for currency in currencies %}
+                    {% if currency.id == account.currency_id %}
+                    <tr>
+                        <th>Debit Balance</th>
+                        <td>{{ account.rest_debit }} {{ currency.currency_name }}</td>
+                    </tr>
+                        {% if type.account_type == 'CreditAccount' %}
+                        <tr>
+                            <th>Credit Balance</th>
+                            <td>{{ account.rest_credit }} {{ currency.currency_name }}</td>
+                        </tr>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+
+            {% if type.account_type in ['CreditAccount', 'DebitAccount'] %}
+                {% for percent in percent_rate %}
+                    {% if percent.id == account.percent_rate_id %}
+                        <tr>
+                            <th>Percent</th>
+                            <td>{{ percent.percent_size }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Date from</th>
+                            <td>{{ percent.valid_from }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Date to</th>
+                            <td>{{ percent.valid_till }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </table>
+    {% for type in accounts_type %}
+        {% if type.id == account.type_id %}
+            {% if type.account_type == 'CreditAccount' %}
+                <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/credit_payment'">Pay Off Credit</button>
+            {% endif %}
+
+            {% if type.account_type == 'DepositAccount' %}
+                <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/withdraw_deposit'">Withdraw Deposit</button>
+            {% endif %}
+
+            {% if type.account_type in ['CreditAccount', 'DefaultAccount'] %}
+                    <button type="button" onclick="window.location.href='/accounts/{{ account_id}}/withdraw'">Withdraw</button>
+                    <button type="button" onclick="window.location.href='/accounts/{{ account_id}}/transfer'">Transfer Funds</button>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/deposit'">Top up</button>
+    <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/transactions'">View Transactions</button>
+    <button type="button" onclick="window.location.href='/accounts'">Back to accounts</button>
 </body>
 </html>

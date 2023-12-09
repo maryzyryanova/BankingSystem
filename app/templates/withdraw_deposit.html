@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Deposit</title>
+</head>
+<body>
+    <h1>Withdraw Deposit</h1>
+
+    <form action="/accounts/{{ account_id }}/withdraw_deposit" method="POST">
+        <label for="funds">Funds:</label>
+        <input type="number" id="funds" name="funds" min="1" value="{{ funds }}" readonly>
+
+        <br>
+
+        <label for="fee">Fee:</label>
+        <input type="number" id="fee" name="fee" min="0" value="{{ fee }}" readonly>
+
+        <br>
+
+        <button type="submit">Withdraw</button>
+    </form>
+</body>
+</html>

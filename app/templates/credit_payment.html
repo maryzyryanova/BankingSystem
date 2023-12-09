@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Payment</title>
+</head>
+<body>
+    <h1>Credit Payment</h1>
+
+    <form action="/accounts/{{ account.id }}/credit_payment" method="POST">
+        <label for="account_from">Select Default Account:</label>
+        <select id="account_from" name="account_from">
+            {% for default in default_accounts %}
+                <option value="{{ default.account_number }}">{{ default.account_number }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Pay Credit</button>
+    </form>
+
+    {% if account.rest_credit > 0 %}
+        <p>Your credit balance: {{ account.rest_credit }}</p>
+        <p>Your payment amount: {{ account.max_rest }}</p>
+    {% else %}
+        <p>Your credit balance is already at 0. No payment is needed.</p>
+    {% endif %}
+</body>
+</html>

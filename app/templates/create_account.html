@@ -4,14 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account</title>
+    <style>
+        form {
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 50%;
+            margin: 0 auto;
+            background-color: #f2f2f2;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .buttons button {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .buttons button:hover {
+            background-color: #00529a;
+        }
+    </style>
 </head>
 <body>
 <h1>Create Account</h1>
 
-<form action="/accounts/create" method="POST">
+<form id="form" action="/accounts/create" method="POST">
     <div class="form-group">
         <label for="account_type">Account Type:</label>
-        <select name="account_type" class="form-control" id="account-type">
+        <select name="account_type" class="form-control" id="account_type">
             <option value="CreditAccount">Credit Account</option>
             <option value="DepositAccount">Deposit Account</option>
             <option value="DefaultAccount">Default Account</option>
@@ -20,7 +61,7 @@
 
     <div class="form-group">
         <label for="currency">Currency:</label>
-        <select name="currency" class="form-control">
+        <select name="currency" id="currency" class="form-control">
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
             <option value="RUB">RUB</option>
@@ -30,42 +71,86 @@
     <div id="credit-form">
         <div class="form-group">
             <label for="percent_rate">Interest Rate:</label>
-            <input type="number" name="percent_rate" class="form-control" required>
+            <input type="number" id="percent_rate" name="percent_rate" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="amount">Amount:</label>
-            <input type="number" name="amount" class="form-control" required>
+            <input type="number" name="amount" id="amount" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="start_date">Start Date:</label>
-            <input type="date" name="start_date" class="form-control" required>
+            <input type="date" name="start_date" id="start_date" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="end_date">End Date:</label>
-            <input type="date" name="end_date" class="form-control" required>
+            <input type="date" name="end_date" id="end_date" class="form-control" required>
         </div>
     </div>
-    <input type="submit" value="Create Account">
+    <button id="btn" type="submit">Create Account</button>
 </form>
-</body>
 <script>
-    window.addEventListener('load', ()=>{
-        document.getElementById("account-type").addEventListener("input", (e)=>{
+    window.addEventListener('load', () => {
+        document.getElementById('account_type').addEventListener('input', (e) => {
             let el = e.target;
             let a = el.value;
-            let b = document.getElementById("credit-form");
+            let b = document.getElementById('credit-form');
             var value = el.options[el.selectedIndex].value;
             var text = el.options[el.selectedIndex].text;
 
-            if (a == 'CreditAccount' || a == 'DepositAccount'){
-                b.style.display = "block";
-            }else{
-                b.style.display = "none";
+            if (a == 'DefaultAccount') {
+                b.style.display = 'none';
+            } else {
+                b.style.display = 'block';
             }
         });
     });
+
+    const createAccountBtn = document.getElementById('btn');
+
+    createAccountBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const apiUrl = "/accounts/create";
+        const formData = {
+                'account_type': document.getElementById('account_type').value,
+                'currency': document.getElementById('currency').value,
+        };
+        const adData = {
+                'percent': document.getElementById('percent_rate').value,
+                'date_from': document.getElementById('start_date').value,
+                'date_till': document.getElementById('end_date').value,
+                'summa': document.getElementById('amount').value
+        }
+        console.log(JSON.stringify(formData));
+        let d;
+        if (formData.account_type!="DefaultAccount"){
+            d = {
+                ...formData,
+                ...adData
+            };
+        }else{
+            d = formData;
+        }
+
+        fetch(apiUrl, {
+             method: 'post',
+             body: JSON.stringify(d),
+             headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+             },
+        })
+        .then(response => {
+            if (response.status === 200) {
+                window.location.href = "/accounts";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching image URL:", error);
+        });
+    });
 </script>
+</body>
 </html>

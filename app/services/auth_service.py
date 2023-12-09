@@ -23,10 +23,11 @@ class AuthService:
         encoded_jwt = jwt.encode(to_encode, os.getenv ('SECRET_KEY'), algorithm=c.ALGORITHM)
         return encoded_jwt
 
-    def get_user_from_jwt(self, token: str):
+    def get_user_from_jwt (self, token: str):
         try:
-            payload = jwt.decode(token, os.getenv ("SECRET_KEY"), algorithms=[c.ALGORITHM])
-            if payload["exp"] - datetime.utcnow() <= timedelta (minutes=60):
+            payload = jwt.decode (token, os.getenv ("SECRET_KEY"), algorithms=[c.ALGORITHM])
+            exp = datetime.fromtimestamp(payload["exp"])
+            if exp - datetime.utcnow() > timedelta (minutes=60):
                 user_id = payload["user_id"]
                 return user_id
         except JWTError:
@@ -64,7 +65,6 @@ class AuthService:
     @staticmethod
     def verify_otp(otp: str, user: Users):
         token = pyotp.TOTP(user.secret).now()
-        print(token, otp, sep=' - ')
         if otp != token:
             return False
         return True

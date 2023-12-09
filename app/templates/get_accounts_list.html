@@ -3,53 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounts List</title>
+    <title>User Profile</title>
     <style>
         body {
             font-family: sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
 
-        table {
+        #user-profile {
+            width: 80%;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+          text-align: center;
+          font-size: 32px;
+          font-weight: bold;
+        }
+
+        .user-info,
+        .account-list,
+        .buttons {
+            margin-bottom: 20px;
+        }
+
+        .user-info h2 {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .user-info ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .account-list table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        th, td {
-            padding: 5px;
+        .account-list table th,
+        .account-list table td {
+            padding: 5px 10px;
             border: 1px solid #ccc;
+        }
+
+        .account-list table th {
             text-align: left;
+        }
+
+        .buttons button {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .buttons button:hover {
+            background-color: #00529a;
         }
     </style>
 </head>
 <body>
-    <h1>Accounts List</h1>
+    <h1>User Profile</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Account Number</th>
-                <th>Account Type</th>
-                <th>Currency</th>
-                <th>Balance</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for account in accounts %}
+    <div id="user-profile">
+        <div class="user-info">
+            <h2>User Information</h2>
+            <ul>
+                <li>
+                    <strong>Name:</strong> {{ user.first_name }} {{ user.surname }}
+                </li>
+                <li>
+                    <strong>Email:</strong> {{ user.email }}
+                </li>
+            </ul>
+        </div>
+
+        <div class="account-list">
+            <h2>Account List</h2>
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ account.account_number }}</td>
-                        <td>{{ account.account_type }}</td>
-                        <td>{{ account.currency }}</td>
-                        <td>{{ account.rest_deposit }}</td>
-                        <td>
-                            <a href="/accounts/{{ account.id }}">View</a>
-                            <a href="/accounts/{{ account.id }}/delete">Delete</a>
-                        </td>
+                        <th>Account Number</th>
+                        <th>Currency</th>
+                        <th>Balance</th>
+                        <th>Actions</th>
                     </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                        <tr>
+                            <td>{{ account.account_number }}</td>
+                            {% for cur in currencies%}
+                                {% if cur.id == account.currency_id%}
+                                    <td>{{ cur.currency_name }}</td>
+                                {% endif%}
+                            {% endfor %}
+                            <td>{{ account.rest_debit }}</td>
+                            <td>
+                                <a href="/accounts/{{ account.id }}">View</a>
+                                <a href="/accounts/{{ account.id }}/delete">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="buttons">
+            <button type="button" onclick="window.location.href='/accounts/create'">Create Account</button>
+        </div>
+    </div>
 </body>
 </html>

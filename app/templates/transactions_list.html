@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions List</title>
+    <style>
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 0 auto;
+        }
+
+        th {
+          background-color: #f2f2f2;
+          padding: 10px;
+        }
+
+        td {
+          padding: 10px;
+        }
+
+        .transaction-id {
+          width: 80px;
+        }
+
+        .transaction-summa {
+          width: 150px;
+          text-align: right;
+        }
+
+        .transaction-currency {
+          width: 150px;
+        }
+
+        .transaction-type {
+          width: 150px;
+        }
+
+        .transaction-time {
+          width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transactions List</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Summa</th>
+                <th>Currency</th>
+                <th>Type</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.summa }}</td>
+                    {% for currency in currencies %}
+                        {% if transaction.currency_id == currency.id %}
+                            <td>{{ currency.currency_name }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    {% for transactions_type in transactions_type %}
+                        {% if transaction.transactions_type_id == transactions_type.id %}
+                            <td>{{ transactions_type.type_name }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    <td>{{ transaction.transaction_time }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/accounts/{{ account_id }}">Back to account</a>
+
+</body>
+</html>

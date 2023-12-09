@@ -1,10 +1,10 @@
 import os
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from sqlmodel import Session
 from starlette.responses import JSONResponse
 from starlette.templating import Jinja2Templates
+
 from app.database import get_session
 from app.models.models import Users
 from app.services.auth_service import AuthService

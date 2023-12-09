@@ -48,29 +48,9 @@ class Currencies(SQLModel, table=True):
     transactions: List["Transactions"] = Relationship (back_populates="currencies")
 
 
-class Operations(SQLModel, table=True):
-    id: UUID = Field(default=False, primary_key=True, unique=True, nullable=False)
-    operation_name: str
-
-    transactions_type: List["TransactionsType"] = Relationship(back_populates="operations")
-
-    operation_type_id: Optional[UUID] = Field(foreign_key='operations_type.id')
-    operations_type: Optional["OperationsType"] = Relationship(back_populates="operations")
-
-
-class OperationsType(SQLModel, table=True):
-    __tablename__ = "operations_type"
-
-    id: UUID = Field(default=False, primary_key=True, unique=True, nullable=False)
-    operation_type_name: str
-
-    operations: Optional[Operations] = Relationship(back_populates="operations_type", sa_relationship_kwargs={'uselist': False})
-
-
 class Transactions(SQLModel, table=True):
     id: UUID = Field(default=False, primary_key=True, unique=True, nullable=False)
     summa: int
-    summa_nominal: int
     transaction_time: datetime.datetime
 
     account_id: Optional[UUID] = Field(default=False, foreign_key='accounts.id')
@@ -90,9 +70,6 @@ class TransactionsType(SQLModel, table=True):
     type_name: str
 
     transactions: List[Transactions] = Relationship (back_populates="transactions_type")
-
-    operations_id: Optional[UUID] = Field(default=False, foreign_key='operations.id')
-    operations: Optional[Operations] = Relationship(back_populates="transactions_type")
 
 
 class Users(SQLModel, table=True):
