@@ -28,7 +28,7 @@ services:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.bot_proxy.rule=Host(`bank-system.by`)"
+      - "traefik.http.routers.bot_proxy.rule=Host(`tofi.prodigy.by`)"
       - "traefik.http.routers.bot_proxy.entrypoints=websecure"
       - "traefik.http.routers.bot_proxy.tls=true"
       - "traefik.http.services.web.loadbalancer.server.port=8000"
