@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Account Status</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Change Account Status</h1>
+    <form action="/accounts/{{ account.id }}/change_status" method="POST">
+        <p>Account Number: {{ account.account_number }}</p>
+        <p>
+            Current Status:
+            {% if account.is_blocked %}
+                <span style="color:red;">Blocked</span>
+            {% else %}
+                <span style="color:green;">Active</span>
+            {% endif %}
+        </p>
+        <label for="is_blocked">New Status:</label>
+        <select id="is_blocked" name="is_blocked">
+            <option value="true">Blocked</option>
+            <option value="false">Active</option>
+        </select>
+        <br>
+        <button type="submit">Update Status</button>
+    </form>
+    <a href="/accounts">Back to Accounts</a>
+</body>
+</html>

@@ -14,6 +14,9 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
+        <label for="password_confirmation">Password Confirmation:</label>
+        <input type="password" id="password_confirmation" name="password_confirmation" required>
+
         <label for="first_name">First Name:</label>
         <input type="text" id="first_name" name="first_name" required>
 
@@ -27,29 +30,35 @@
 
     <script>
         window.addEventListener("load",()=>{
-        document.getElementById("btn").addEventListener("click", (e)=>{
-            e.preventDefault();
-            const apiUrl = "http://localhost:8000/register";
-            const formData = new FormData();
+            document.getElementById("btn").addEventListener("click", (e)=>{
+                e.preventDefault();
+                const apiUrl = "http://localhost:8000/register";
+                const formData = new FormData();
 
-            formData.append('email', document.getElementById('email').value);
-            formData.append('password', document.getElementById('password').value);
-            formData.append('first_name', document.getElementById('first_name').value);
-            formData.append('surname', document.getElementById('surname').value);
+                formData.append('email', document.getElementById('email').value);
+                formData.append('password', document.getElementById('password').value);
+                formData.append('password_confirmation', document.getElementById('password_confirmation').value);
+                formData.append('first_name', document.getElementById('first_name').value);
+                formData.append('surname', document.getElementById('surname').value);
 
-            const apiRequest = fetch(apiUrl, {
-                method: 'POST',
-                body: formData
-            });
+                if (document.getElementById('password').value !== document.getElementById('password_confirmation').value) {
+                    alert('Passwords do not match. Please enter the same password in both fields.');
+                    return;
+                }
 
-            apiRequest.then(response => {
-                if (response.ok) {
-                    response.json().then(data => {
-                        const imageUrl = data.qr_url;
-                        document.getElementById("qr").src = imageUrl;
-                        document.getElementById("qr").style.display = "block";
+                const apiRequest = fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                        const nextButton = document.createElement('button');
+                apiRequest.then(response => {
+                    if (response.ok) {
+                        response.json().then(data => {
+                            const imageUrl = data.qr_url;
+                            document.getElementById("qr").src = imageUrl;
+                            document.getElementById("qr").style.display = "block";
+
+                            const nextButton = document.createElement('button');
                             nextButton.textContent = 'Go to Next Page';
                             nextButton.addEventListener('click', () => {
                                 window.location.href = '/verify_otp';
@@ -57,12 +66,12 @@
 
                             document.body.appendChild(nextButton);
 
-                    });
-                } else {
-                    console.error("Error fetching image URL:", response.statusText);
-                }
-            });
-        });});
+                        });
+                    } else {
+                        console.error("Error fetching image URL:", response.statusText);
+                    }
+                });
+            });});
     </script>
 </body>
 </html>

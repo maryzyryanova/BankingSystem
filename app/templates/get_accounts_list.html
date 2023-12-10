@@ -94,8 +94,10 @@
                 <thead>
                     <tr>
                         <th>Account Number</th>
+                        <th>Type</th>
                         <th>Currency</th>
                         <th>Balance</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -103,12 +105,23 @@
                     {% for account in accounts %}
                         <tr>
                             <td>{{ account.account_number }}</td>
+                            {% for type in accounts_type %}
+                                {% if type.id == account.type_id%}
+                                    <td>{{ type.account_type }}</td>
+                                {% endif%}
+                            {% endfor%}
                             {% for cur in currencies%}
                                 {% if cur.id == account.currency_id%}
                                     <td>{{ cur.currency_name }}</td>
                                 {% endif%}
                             {% endfor %}
                             <td>{{ account.rest_debit }}</td>
+
+                            {% if account.is_blocked%}
+                                <td>Blocked</td>
+                            {% else %}
+                                <td>Active</td>
+                            {% endif %}
                             <td>
                                 <a href="/accounts/{{ account.id }}">View</a>
                                 <a href="/accounts/{{ account.id }}/delete">Delete</a>

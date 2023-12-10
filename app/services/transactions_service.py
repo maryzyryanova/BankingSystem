@@ -36,3 +36,9 @@ class TransactionsService:
 
     def get_all_transactions_by_account_id(self, account_id):
         return self.session.query (Transactions).filter (Transactions.account_id == account_id)
+
+    def delete_transactions_by_account_ids (self, account_id):
+        transactions = self.session.query (Transactions).filter(Transactions.account_id == account_id).all()
+        for transaction in transactions:
+            self.session.delete (transaction)
+        self.session.commit()

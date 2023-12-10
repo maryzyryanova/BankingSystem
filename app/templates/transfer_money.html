@@ -8,17 +8,46 @@
 <body>
     <h1>Transfer Money</h1>
 
-    <form action="/accounts/{{ account_id }}/transfer" method="POST">
-        <label for="account_from">Account From:</label>
-        <input type="text" id="account_from" name="account_from" value="{{ account_number }}" readonly>
+    <p>Account Number: {{ account.account_number }}</p>
+    <p>Balance: {{ account.rest_debit }}</p>
 
-        <label for="account_to">Account To:</label>
-        <input type="text" id="account_to" name="account_to">
+    <form id="transfer-form" method="POST" action="/accounts/{{ account.id }}/transfer">
+        <p>Select the account to transfer money to:</p>
+        <select name="account_to">
+            {% for account in accounts %}
+                {% if not account.is_blocked %}
+                <option value="{{ account.account_number }}">{{ account.account_number }}</option>
+            {% endfor %}
+        </select>
 
-        <label for="amount">Amount:</label>
-        <input type="text" id="amount" name="amount">
+        <p>Enter transfer amount:</p>
+        <input type="number" name="amount" placeholder="Amount">
 
         <button type="submit">Transfer</button>
+
+        <p id="error_message"></p>
     </form>
+
+    <script>
+        const transferForm = document.getElementById('transfer-form');
+        const errorMessage = document.getElementById('error_message');
+
+        transferForm.addEventListener('submit', () => {
+            const account_to = transferForm.querySelector('select[name="account_to"]').value;
+            const amount = parseInt(transferForm.querySelector('input[type="number"]').value);
+
+            if (isNaN(amount) || amount < 0) {
+                errorMessage.textContent = 'Please enter a valid transfer amount.';
+                return false;
+            }
+
+            if (amount > account.rest_debit) {
+                errorMessage.textContent = 'Insufficient funds in the current account.';
+                return false;
+            }
+
+            transferForm.submit();
+        });
+    </script>
 </body>
 </html>

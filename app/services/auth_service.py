@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 from uuid import UUID
 
 import pyotp
@@ -7,6 +7,7 @@ import qrcode
 from dotenv import load_dotenv
 from jose import jwt, JWTError
 from qrcode.image.svg import SvgImage
+
 import app.constants as c
 from app.models.models import Users
 

@@ -115,32 +115,59 @@
 
         const apiUrl = "/accounts/create";
         const formData = {
-                'account_type': document.getElementById('account_type').value,
-                'currency': document.getElementById('currency').value,
+            'account_type': document.getElementById('account_type').value,
+            'currency': document.getElementById('currency').value,
         };
-        const adData = {
-                'percent': document.getElementById('percent_rate').value,
+
+        let d;
+        if (formData.account_type !== 'DefaultAccount') {
+            const percentRate = parseFloat(document.getElementById('percent_rate').value);
+
+            if (formData.account_type === 'CreditAccount') {
+                if (percentRate < 9 || percentRate > 20) {
+                    alert('Interest rate for credit account must be between 9 and 20.');
+                    return;
+                }
+            } else if (formData.account_type === 'DepositAccount') {
+                if (percentRate < 7 || percentRate > 18) {
+                    alert('Interest rate for deposit account must be between 7 and 18.');
+                    return;
+                }
+            }
+
+            const adData = {
+                'percent': percentRate,
                 'date_from': document.getElementById('start_date').value,
                 'date_till': document.getElementById('end_date').value,
                 'summa': document.getElementById('amount').value
-        }
-        console.log(JSON.stringify(formData));
-        let d;
-        if (formData.account_type!="DefaultAccount"){
+            };
+
+            if (adData.date_from > adData.date_till){
+                alert('Date from must be less than a date till.');
+                return;
+            }
+
+            const diffInYears = Math.abs(new Date(adData.date_till) - new Date(adData.date_from)) / (365 * 24 * 60 * 60 * 1000);
+
+            if (diffInYears < 1 || diffInYears > 5) {
+                alert('Date from and date till must differ by at least 1 year and no more than 5 years.');
+                return;
+            }
+
             d = {
                 ...formData,
                 ...adData
             };
-        }else{
+        } else {
             d = formData;
         }
 
         fetch(apiUrl, {
-             method: 'post',
-             body: JSON.stringify(d),
-             headers: {
+            method: 'post',
+            body: JSON.stringify(d),
+            headers: {
                 'Content-Type': 'application/json;charset=utf-8'
-             },
+            },
         })
         .then(response => {
             if (response.status === 200) {

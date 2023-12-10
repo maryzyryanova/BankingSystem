@@ -83,12 +83,12 @@ class AccountsService:
 
     def deposit_money_to_account(self, account_id, amount, transactions):
         account: Accounts = self.get_account_by_id(account_id)
-        account_type: str = self.session.query(AccountsType).filter(AccountsType.id == account.type_id).first().type_name
+        account_type: str = self.session.query(AccountsType).filter(AccountsType.id == account.type_id).first().account_type
         if account_type != 'DepositAccount':
             self.session.query(Accounts).filter (Accounts.id == account_id).update ({"rest_debit": account.rest_debit + amount})
-            self.session.commit()
         else:
             self.top_up_deposit(account, transactions)
+        self.session.commit ()
 
     def get_account_by_account_number(self, account_number):
         return self.session.query(Accounts).filter(Accounts.account_number == account_number).first()
@@ -126,9 +126,8 @@ class AccountsService:
         percent_rate: PercentRate = self.session.query(PercentRate).filter(PercentRate.id == account.percent_rate_id).first()
         rest_credit = account.rest_credit
 
-        monthly_percent = percent_rate.percent_size / 12
-        period = (percent_rate.valid_till - percent_rate.valid_till).days // 12
-
+        monthly_percent = percent_rate.percent_size / 12 / 100
+        period = (percent_rate.valid_till - percent_rate.valid_from).days // 12
         monthly_payment = rest_credit * monthly_percent / (1 - (1 + monthly_percent) ** (-period))
 
         account.max_rest = monthly_payment
@@ -136,7 +135,7 @@ class AccountsService:
 
     def filter_accounts_by_type(self, type):
         default_account_numbers: list[Accounts] = self.session.query(
-            Accounts.account_number
+            Accounts
         ).filter(
             Accounts.type_id == AccountsType.id
         ).filter(
@@ -160,3 +159,24 @@ class AccountsService:
         else:
             fee = 0
         return funds, fee
+
+    def filter_accounts_by_currency_id (self, account):
+        default_account_numbers = []
+        for a in self.session.query (
+                Accounts
+        ).filter (
+            Accounts.currency_id == account.currency_id
+        ).all ():
+            if a.id != account.id:
+                default_account_numbers.append(a)
+
+        return default_account_numbers
+
+    def change_account_status(self, account: Accounts, status):
+        if status == 'false':
+            account.is_blocked = False
+        elif status == 'true':
+            account.is_blocked = True
+        self.session.commit()
+
+

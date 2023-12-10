@@ -14,6 +14,7 @@ class Accounts(SQLModel, table=True):
     debit_credit_type: int
     card_number: int
     account_number: int
+    is_blocked: bool
 
     user_id: Optional[UUID] = Field (foreign_key='users.id')
     users: Optional["Users"] = Relationship (back_populates="accounts")

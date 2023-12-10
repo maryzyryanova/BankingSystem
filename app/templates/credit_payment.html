@@ -11,9 +11,19 @@
     <form action="/accounts/{{ account.id }}/credit_payment" method="POST">
         <label for="account_from">Select Default Account:</label>
         <select id="account_from" name="account_from">
-            {% for default in default_accounts %}
-                <option value="{{ default.account_number }}">{{ default.account_number }}</option>
-            {% endfor %}
+            {% if default_accounts %}
+                {% for default in default_accounts %}
+                    {% if default.currency_id == account.currency_id and default.rest_debit >= account.max_rest %}
+                        {% if not default.is_blocked %}
+                            <option value="{{ default.account_number }}">{{ default.account_number }}</option>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-warning">
+                    There are no default accounts available. Please add a default account before proceeding with credit payment.
+                </div>
+            {% endif %}
         </select>
 
         <button type="submit">Pay Credit</button>

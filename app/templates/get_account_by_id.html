@@ -41,6 +41,14 @@
             <th>Account Number</th>
             <td>{{ account.account_number }}</td>
         </tr>
+        <tr>
+             <th>Account Status</th>
+            {% if account.is_blocked%}
+                <td>Blocked</td>
+            {% else %}
+                <td>Active</td>
+            {% endif %}
+        </tr>
         {% for type in accounts_type %}
             {% if type.id == account.type_id %}
             <tr>
@@ -58,6 +66,10 @@
                         <tr>
                             <th>Credit Balance</th>
                             <td>{{ account.rest_credit }} {{ currency.currency_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Monthly Payment</th>
+                            <td>{{ account.max_rest }} {{ currency.currency_name }}</td>
                         </tr>
                         {% endif %}
                     {% endif %}
@@ -87,24 +99,29 @@
             {% endif %}
         {% endfor %}
     </table>
-    {% for type in accounts_type %}
-        {% if type.id == account.type_id %}
-            {% if type.account_type == 'CreditAccount' %}
-                <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/credit_payment'">Pay Off Credit</button>
-            {% endif %}
+    {% if not account.is_blocked %}
+        {% for type in accounts_type %}
+            {% if type.id == account.type_id %}
+                {% if type.account_type == 'CreditAccount' %}
+                    <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/credit_payment'">Pay Off Credit</button>
+                {% endif %}
 
-            {% if type.account_type == 'DepositAccount' %}
-                <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/withdraw_deposit'">Withdraw Deposit</button>
-            {% endif %}
+                {% if type.account_type == 'DepositAccount' %}
+                    <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/withdraw_deposit'">Withdraw Deposit</button>
+                {% endif %}
 
-            {% if type.account_type in ['CreditAccount', 'DefaultAccount'] %}
-                    <button type="button" onclick="window.location.href='/accounts/{{ account_id}}/withdraw'">Withdraw</button>
-                    <button type="button" onclick="window.location.href='/accounts/{{ account_id}}/transfer'">Transfer Funds</button>
+                {% if type.account_type in ['CreditAccount', 'DefaultAccount'] %}
+                        <button type="button" onclick="window.location.href='/accounts/{{ account_id}}/withdraw'">Withdraw</button>
+                        <button type="button" onclick="window.location.href='/accounts/{{ account_id}}/transfer'">Transfer Funds</button>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    {% endfor %}
-    <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/deposit'">Top up</button>
-    <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/transactions'">View Transactions</button>
+        {% endfor %}
+        <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/change_status'">Block</button>
+        <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/deposit'">Top up</button>
+        <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/transactions'">View Transactions</button>
+    {% else %}
+        <button type="button" onclick="window.location.href='/accounts/{{ account_id }}/change_status'">Unblock</button>
+    {% endif %}
     <button type="button" onclick="window.location.href='/accounts'">Back to accounts</button>
 </body>
 </html>
