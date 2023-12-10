@@ -15,7 +15,7 @@ load_dotenv()
 
 
 class AuthService:
-    def generate_access_token(self, user_id: UUID) -> str:
+    def generate_access_token(self, user_id) -> str:
         to_encode = {
             "user_id": str (user_id),
         }
