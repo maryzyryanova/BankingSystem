@@ -16,7 +16,8 @@
         <select name="account_to">
             {% for account in accounts %}
                 {% if not account.is_blocked %}
-                <option value="{{ account.account_number }}">{{ account.account_number }}</option>
+                    <option value="{{ account.account_number }}">{{ account.account_number }}</option>
+                {% endif %}
             {% endfor %}
         </select>
 
