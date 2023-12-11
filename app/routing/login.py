@@ -43,8 +43,14 @@ async def login(
     return response
 
 
-
-
-
-
+@router.get("/")
+def login_signup(
+    request: Request
+):
+    return templates.TemplateResponse (
+        "homepage.html",
+        {
+            "request": request,
+        }
+    )
 

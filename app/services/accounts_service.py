@@ -47,6 +47,7 @@ class AccountsService:
             debet_credit_type=debet_credit,
             card_number=random.randint(10 ** 15, 10 ** 16 - 1),
             account_number=random.randint(10**12, 10**13 - 1),
+            is_blocked=False
         )
 
         if accounts_schema.account_type == 'CreditAccount':
@@ -94,15 +95,8 @@ class AccountsService:
         return self.session.query(Accounts).filter(Accounts.account_number == account_number).first()
 
     def transfer_money(self, account_from, account_to, amount):
-        if account_from == account_to:
-            raise ValueError("Choose another account for transferring funds")
         account_from: Accounts = self.get_account_by_account_number(account_from)
         account_to: Accounts = self.get_account_by_account_number (account_to)
-        if account_to is None:
-            raise ValueError("Account number doesn't exist")
-
-        if account_from.rest_debit < amount:
-            raise ValueError("There is no money")
 
         self.session.query(Accounts).filter(Accounts.id == account_from.id).update({"rest_debit": account_from.rest_debit - amount})
         self.session.query(Accounts).filter(Accounts.id == account_to.id).update({"rest_debit": account_to.rest_debit + amount})
@@ -133,14 +127,16 @@ class AccountsService:
         account.max_rest = monthly_payment
         return account
 
-    def filter_accounts_by_type(self, type):
-        default_account_numbers: list[Accounts] = self.session.query(
+    def filter_accounts_by_type (self, type, user_id):
+        default_account_numbers: list[Accounts] = self.session.query (
             Accounts
-        ).filter(
+        ).filter (
             Accounts.type_id == AccountsType.id
-        ).filter(
+        ).filter (
             AccountsType.account_type == type
-        ).all()
+        ).filter (
+            Accounts.user_id == user_id
+        ).all ()
         return default_account_numbers
 
     def return_money_from_deposit(self, account_id, transactions):

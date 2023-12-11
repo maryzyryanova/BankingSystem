@@ -290,9 +290,15 @@ async def transfer_money(
 async def pay_for_credit(
     request: Request,
 ):
+    access_token = request.cookies.get ("access_token")
+    user_id = auth_service.get_user_from_jwt (access_token)
+
+    if user_id is None:
+        return RedirectResponse ("/login")
+
     account_id = request.path_params["account_id"]
     account = accounts_service.get_account_by_id(account_id)
-    default_accounts = accounts_service.filter_accounts_by_type("DefaultAccount")
+    default_accounts = accounts_service.filter_accounts_by_type("DefaultAccount", user_id)
     return templates.TemplateResponse (
         "credit_payment.html",
         {
@@ -330,18 +336,17 @@ async def withdraw_deposit(
     request: Request,
 ):
     account_id = request.path_params["account_id"]
-    if VerifyOwner.VerifyOwner('authenticate via Touch ID'):
-        transactions: list[Transactions] = transaction_service.get_all_transactions_by_account_id(account_id)
-        funds, fee = accounts_service.return_money_from_deposit(account_id, transactions)
-        return templates.TemplateResponse (
-            "withdraw_deposit.html",
-            {
-                "request": request,
-                "account_id": account_id,
-                "funds": funds,
-                "fee": fee
-            }
-        )
+    transactions: list[Transactions] = transaction_service.get_all_transactions_by_account_id (account_id)
+    funds, fee = accounts_service.return_money_from_deposit (account_id, transactions)
+    return templates.TemplateResponse (
+        "withdraw_deposit.html",
+        {
+            "request": request,
+            "account_id": account_id,
+            "funds": funds,
+            "fee": fee
+        }
+    )
 
 
 @router.post("/{account_id}/withdraw_deposit")
@@ -384,8 +389,6 @@ async def change_status(
     is_blocked = Form(...)
 ):
     account = accounts_service.get_account_by_id (request.path_params["account_id"])
-
     accounts_service.change_account_status (account, is_blocked)
-
     return RedirectResponse (f"/accounts/{account.id}", status_code=status.HTTP_302_FOUND)
 

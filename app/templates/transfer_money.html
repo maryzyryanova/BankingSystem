@@ -8,12 +8,12 @@
 <body>
     <h1>Transfer Money</h1>
 
-    <p>Account Number: {{ account.account_number }}</p>
-    <p>Balance: {{ account.rest_debit }}</p>
+    <p>Account Number: <input type="number" readonly value="{{ account.account_number }}"></p>
+    <p>Balance: <input  id="rest_debit" type="number" readonly value="{{ account.rest_debit }}"></p>
 
     <form id="transfer-form" method="POST" action="/accounts/{{ account.id }}/transfer">
         <p>Select the account to transfer money to:</p>
-        <select name="account_to">
+        <select id="account_to" name="account_to">
             {% for account in accounts %}
                 {% if not account.is_blocked %}
                     <option value="{{ account.account_number }}">{{ account.account_number }}</option>
@@ -22,33 +22,43 @@
         </select>
 
         <p>Enter transfer amount:</p>
-        <input type="number" name="amount" placeholder="Amount">
+        <input id="amount" type="number" name="amount" placeholder="Amount">
 
         <button type="submit">Transfer</button>
 
         <p id="error_message"></p>
     </form>
-
+    <a href="/accounts/{{ account.id }}">Back to Account</a>
     <script>
-        const transferForm = document.getElementById('transfer-form');
-        const errorMessage = document.getElementById('error_message');
+        window.addEventListener('load', () => {
+            const transferForm = document.getElementById('transfer-form');
+            const errorMessage = document.getElementById('error_message');
 
-        transferForm.addEventListener('submit', () => {
-            const account_to = transferForm.querySelector('select[name="account_to"]').value;
-            const amount = parseInt(transferForm.querySelector('input[type="number"]').value);
+            transferForm.addEventListener('submit', (e) => {
+                e.preventDefault();
 
-            if (isNaN(amount) || amount < 0) {
-                errorMessage.textContent = 'Please enter a valid transfer amount.';
-                return false;
-            }
+                const accountTo = document.getElementById('account_to').value;
+                const amount = parseInt(document.getElementById('amount').value);
+                const restDebit = parseInt(document.getElementById('rest_debit').value);
+                console.log(restDebit)
+                if (!isNaN(restDebit)) {
+                    if (isNaN(amount) || amount < 0) {
+                        alert('Enter a valid number.');
+                        return;
+                    }
 
-            if (amount > account.rest_debit) {
-                errorMessage.textContent = 'Insufficient funds in the current account.';
-                return false;
-            }
+                    if (amount > restDebit) {
+                        alert('Not enough funds to transfer.');
+                        return;
+                    }
 
-            transferForm.submit();
+                    transferForm.submit();
+                } else {
+                    alert('Invalid rest_debit value.');
+                    return;
+                }
+            });
         });
-    </script>
+</script>
 </body>
 </html>

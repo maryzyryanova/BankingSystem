@@ -90,6 +90,7 @@
         </div>
     </div>
     <button id="btn" type="submit">Create Account</button>
+    <a href="/accounts">Back to Accounts</a>
 </form>
 <script>
     window.addEventListener('load', () => {
@@ -133,6 +134,11 @@
                     alert('Interest rate for deposit account must be between 7 and 18.');
                     return;
                 }
+            }
+
+            if(document.getElementById('amount').value > 100000){
+                alert('Too high amount of money to apply.');
+                return;
             }
 
             const adData = {
