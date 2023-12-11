@@ -17,14 +17,14 @@ class AccountsService:
 
     def create_account(self, accounts_schema: AccountsSchema,
                        percent_rate_schema: PercentRateSchema, user_id: UUID) -> Accounts:
-        debet_credit, rest_credit, rest_debet = 0, 0, 0
+        rest_credit, rest_debet = 0, 0
         if accounts_schema.account_type == 'CreditAccount':
-            debet_credit, rest_credit, rest_debet = 1, percent_rate_schema.summa, percent_rate_schema.summa
+            rest_credit, rest_debet = percent_rate_schema.summa, percent_rate_schema.summa
         elif accounts_schema.account_type == 'DepositAccount':
             rest_debet = percent_rate_schema.summa
             rest_credit = percent_rate_schema.summa
         elif accounts_schema.account_type == 'DefaultAccount':
-            debet_credit, rest_credit, rest_debet = 0, 0, 0
+            rest_credit, rest_debet = 0, 0
 
         if percent_rate_schema is not None:
             percent_rate = self.percent_rate_service.create_percent_rate(percent_rate_schema)
@@ -44,7 +44,6 @@ class AccountsService:
             rest_debit=rest_debet,
             rest_credit=rest_credit,
             max_rest=0,
-            debet_credit_type=debet_credit,
             card_number=random.randint(10 ** 15, 10 ** 16 - 1),
             account_number=random.randint(10**12, 10**13 - 1),
             is_blocked=False
@@ -75,6 +74,7 @@ class AccountsService:
 
         if account.rest_debit < amount:
             raise ValueError("There is no money")
+
         params = {"rest_debit": account.rest_debit - amount}
         self.update_account(account_id, params)
 
@@ -97,6 +97,9 @@ class AccountsService:
     def transfer_money(self, account_from, account_to, amount):
         account_from: Accounts = self.get_account_by_account_number(account_from)
         account_to: Accounts = self.get_account_by_account_number (account_to)
+
+        if account_from.rest_debit < amount:
+            raise ValueError("There is no money")
 
         self.session.query(Accounts).filter(Accounts.id == account_from.id).update({"rest_debit": account_from.rest_debit - amount})
         self.session.query(Accounts).filter(Accounts.id == account_to.id).update({"rest_debit": account_to.rest_debit + amount})

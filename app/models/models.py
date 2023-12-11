@@ -11,7 +11,6 @@ class Accounts(SQLModel, table=True):
     rest_debit: int
     rest_credit: int
     max_rest: int
-    debit_credit_type: int
     card_number: int
     account_number: int
     is_blocked: bool
