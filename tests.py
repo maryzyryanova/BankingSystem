@@ -15,6 +15,7 @@ from app.services.transactions_service import TransactionsService
 
 templates = Jinja2Templates(directory=os.path.abspath(os.path.expanduser('app/templates')))
 
+
 class AccountsServiceTest(unittest.TestCase):
 
     def setUp(self):

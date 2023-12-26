@@ -74,10 +74,9 @@
                         {% endif %}
                     {% endif %}
                 {% endfor %}
-            {% endif %}
 
 
-            {% if type.account_type in ['CreditAccount', 'DebitAccount'] %}
+            {% if type.account_type in ['CreditAccount', 'DepositAccount'] %}
                 {% for percent in percent_rate %}
                     {% if percent.id == account.percent_rate_id %}
                         <tr>
@@ -96,6 +95,7 @@
                         </tr>
                     {% endif %}
                 {% endfor %}
+            {% endif %}
             {% endif %}
         {% endfor %}
     </table>
